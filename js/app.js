@@ -482,8 +482,8 @@ function setupMobileVideoScrub() {
 
 /* ─────────────────────────────────────────────────────
    Scroll snap — pauses at each section midpoint
-   Fires ~180ms after the user stops wheeling,
-   snaps if within ±7% of a snap point.
+   Uses lenis.on('scroll') so it triggers after Lenis
+   finishes its own easing, not the raw wheel event.
 ───────────────────────────────────────────────────── */
 const SNAP_POINTS = [
   0.165,   // 001 Formula       mid = (10+23)/2
@@ -497,33 +497,49 @@ const SNAP_POINTS = [
 function setupScrollSnap() {
   if (IS_MOBILE || !lenis) return;
 
-  let wheelTimer = null;
+  let stopTimer  = null;
   let isSnapping = false;
 
-  window.addEventListener('wheel', () => {
+  function getContProgress() {
+    const totalH     = scrollCont.offsetHeight;
+    const contTop    = scrollCont.offsetTop;
+    const scrollable = totalH - window.innerHeight;
+    return Math.max(0, Math.min(1, (window.scrollY - contTop) / scrollable));
+  }
+
+  function snapToNearest() {
+    const p = getContProgress();
+    if (p <= 0.02 || p >= 0.98) return; // outside container — don't snap
+
+    let nearest = null, minDist = 0.1; // ±10% threshold
+    for (const pt of SNAP_POINTS) {
+      const d = Math.abs(pt - p);
+      if (d < minDist) { minDist = d; nearest = pt; }
+    }
+    if (nearest === null) return;
+
+    isSnapping = true;
+    const totalH     = scrollCont.offsetHeight;
+    const contTop    = scrollCont.offsetTop;
+    const scrollable = totalH - window.innerHeight;
+    lenis.scrollTo(contTop + nearest * scrollable, {
+      duration  : 1.2,
+      easing    : t => 1 - Math.pow(1 - t, 3),
+      onComplete: () => { isSnapping = false; }
+    });
+  }
+
+  /* Fires on every Lenis scroll tick — 150ms after it stops → snap */
+  lenis.on('scroll', () => {
     if (isSnapping) return;
-    clearTimeout(wheelTimer);
-    wheelTimer = setTimeout(() => {
-      const totalH     = scrollCont.offsetHeight;
-      const contTop    = scrollCont.getBoundingClientRect().top + window.scrollY;
-      const scrollable = totalH - window.innerHeight;
-      const p          = Math.max(0, Math.min(1, (window.scrollY - contTop) / scrollable));
+    clearTimeout(stopTimer);
+    stopTimer = setTimeout(snapToNearest, 150);
+  });
 
-      /* Nearest snap point within ±7% */
-      let nearest = null, minDist = 0.07;
-      for (const pt of SNAP_POINTS) {
-        const d = Math.abs(pt - p);
-        if (d < minDist) { minDist = d; nearest = pt; }
-      }
-
-      if (nearest === null) return;
-      isSnapping = true;
-      lenis.scrollTo(contTop + nearest * scrollable, {
-        duration  : 1.1,
-        easing    : t => 1 - Math.pow(1 - t, 3),
-        onComplete: () => { isSnapping = false; }
-      });
-    }, 180);
+  /* User starts scrolling again — cancel pending snap */
+  window.addEventListener('wheel', () => {
+    if (isSnapping) isSnapping = false;
+    clearTimeout(stopTimer);
   }, { passive: true });
 }
 
