@@ -481,66 +481,95 @@ function setupMobileVideoScrub() {
 }
 
 /* ─────────────────────────────────────────────────────
-   Scroll snap — pauses at each section midpoint
-   Uses lenis.on('scroll') so it triggers after Lenis
-   finishes its own easing, not the raw wheel event.
+   Scroll snap — one wheel tick = one section
+   Intercepts wheel events in the scroll-container zone,
+   pauses Lenis, animates with rAF, resumes Lenis after.
 ───────────────────────────────────────────────────── */
 const SNAP_POINTS = [
-  0.165,   // 001 Formula       mid = (10+23)/2
-  0.315,   // 002 Anti-Ageing   mid = (25+38)/2
-  0.465,   // 003 Targets       mid = (40+53)/2
-  0.610,   // 004 Ingredients   mid = (55+67)/2
-  0.745,   // 005 The Ritual    mid = (69+80)/2
-  0.915,   // CTA               mid = (83+100)/2
+  0,       // hero top
+  0.165,   // 001 Formula
+  0.315,   // 002 Anti-Ageing
+  0.465,   // 003 Targets
+  0.610,   // 004 Ingredients
+  0.745,   // 005 The Ritual
+  0.915,   // CTA
 ];
 
 function setupScrollSnap() {
   if (IS_MOBILE || !lenis) return;
 
-  let stopTimer  = null;
-  let isSnapping = false;
+  let currentIdx = 0;
+  let isAnimating = false;
+  let animRAF = null;
 
-  function getContProgress() {
-    const totalH     = scrollCont.offsetHeight;
+  function snapY(progress) {
     const contTop    = scrollCont.offsetTop;
-    const scrollable = totalH - window.innerHeight;
-    return Math.max(0, Math.min(1, (window.scrollY - contTop) / scrollable));
+    const scrollable = scrollCont.offsetHeight - window.innerHeight;
+    return contTop + progress * scrollable;
   }
 
-  function snapToNearest() {
-    const p = getContProgress();
-    if (p <= 0.02 || p >= 0.98) return; // outside container — don't snap
+  function inZone() {
+    const top = scrollCont.offsetTop;
+    const bot = top + scrollCont.offsetHeight - window.innerHeight;
+    return window.scrollY >= top - 20 && window.scrollY <= bot + 20;
+  }
 
-    let nearest = null, minDist = 0.1; // ±10% threshold
-    for (const pt of SNAP_POINTS) {
+  /* Sync currentIdx to actual scroll position */
+  function syncIndex() {
+    const contTop    = scrollCont.offsetTop;
+    const scrollable = scrollCont.offsetHeight - window.innerHeight;
+    const p = (window.scrollY - contTop) / scrollable;
+    let best = 0, bestDist = Infinity;
+    SNAP_POINTS.forEach((pt, i) => {
       const d = Math.abs(pt - p);
-      if (d < minDist) { minDist = d; nearest = pt; }
-    }
-    if (nearest === null) return;
-
-    isSnapping = true;
-    const totalH     = scrollCont.offsetHeight;
-    const contTop    = scrollCont.offsetTop;
-    const scrollable = totalH - window.innerHeight;
-    lenis.scrollTo(contTop + nearest * scrollable, {
-      duration  : 1.2,
-      easing    : t => 1 - Math.pow(1 - t, 3),
-      onComplete: () => { isSnapping = false; }
+      if (d < bestDist) { bestDist = d; best = i; }
     });
+    currentIdx = best;
   }
 
-  /* Fires on every Lenis scroll tick — 150ms after it stops → snap */
-  lenis.on('scroll', () => {
-    if (isSnapping) return;
-    clearTimeout(stopTimer);
-    stopTimer = setTimeout(snapToNearest, 150);
-  });
+  function animateTo(targetY, done) {
+    cancelAnimationFrame(animRAF);
+    const startY   = window.scrollY;
+    const dist     = targetY - startY;
+    const duration = 900;
+    const t0       = performance.now();
 
-  /* User starts scrolling again — cancel pending snap */
-  window.addEventListener('wheel', () => {
-    if (isSnapping) isSnapping = false;
-    clearTimeout(stopTimer);
-  }, { passive: true });
+    lenis.stop();
+
+    function tick(now) {
+      const raw    = Math.min((now - t0) / duration, 1);
+      const eased  = raw < 0.5
+        ? 4 * raw * raw * raw
+        : 1 - Math.pow(-2 * raw + 2, 3) / 2;
+
+      window.scrollTo(0, startY + dist * eased);
+      ScrollTrigger.update();
+
+      if (raw < 1) {
+        animRAF = requestAnimationFrame(tick);
+      } else {
+        lenis.scrollTo(targetY, { immediate: true });
+        lenis.start();
+        done();
+      }
+    }
+    animRAF = requestAnimationFrame(tick);
+  }
+
+  function goTo(idx) {
+    idx = Math.max(0, Math.min(SNAP_POINTS.length - 1, idx));
+    currentIdx  = idx;
+    isAnimating = true;
+    animateTo(snapY(SNAP_POINTS[idx]), () => { isAnimating = false; });
+  }
+
+  window.addEventListener('wheel', e => {
+    if (!inZone()) return;
+    e.preventDefault();
+    if (isAnimating) return;
+    syncIndex();
+    goTo(currentIdx + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: false });
 }
 
 function setupReviews() {
