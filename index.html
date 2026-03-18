@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Glycolic Acid Pads 20% — Pharmiitalia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ─── PROMO BANNER ────────────────────────── -->
+  <div id="promo-banner">
+    <div class="promo-inner">
+      <span class="promo-label">Limited Offer</span>
+      <p class="promo-text">Free shipping on orders over £40 · Code <strong>GLOW20</strong> for 20% off</p>
+      <div class="promo-countdown">
+        <div class="countdown-unit"><span id="cd-days">00</span><small>days</small></div>
+        <span class="countdown-sep">:</span>
+        <div class="countdown-unit"><span id="cd-hours">00</span><small>hrs</small></div>
+        <span class="countdown-sep">:</span>
+        <div class="countdown-unit"><span id="cd-mins">00</span><small>min</small></div>
+        <span class="countdown-sep">:</span>
+        <div class="countdown-unit"><span id="cd-secs">00</span><small>sec</small></div>
+      </div>
+      <button class="promo-close" id="promo-close" aria-label="Close banner">✕</button>
+    </div>
+  </div>
+
+  <!-- ─── FLOATING CTA ──────────────────────── ---->
+  <a href="#purchase" class="floating-cta" id="floating-cta">
+    <span class="floating-label">Shop Now</span>
+    <span class="floating-price">£34.99</span>
+  </a>
+
+  <!-- ─── LOADER ─────────────────────────────── -->
+  <div id="loader">
+    <div class="loader-brand">PHARMIITALIA</div>
+    <div class="loader-progress">
+      <div id="loader-bar"></div>
+    </div>
+    <div id="loader-percent">0%</div>
+  </div>
+
+  <!-- ─── FIXED HEADER ──────────────────────── -->
+  <header class="site-header">
+    <nav>
+      <a href="#" class="nav-logo">PHARMIITALIA</a>
+      <ul class="nav-links">
+        <li><a href="#">Formula</a></li>
+        <li><a href="#">Results</a></li>
+        <li><a href="#">Shop</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ─── HERO STANDALONE ───────────────────── -->
+  <section class="hero-standalone" id="hero">
+    <div class="hero-content">
+      <span class="hero-eyebrow">Glycolic Acid Pads 20%&nbsp;&nbsp;·&nbsp;&nbsp;60 Pads</span>
+      <h1 class="hero-heading">
+        <span class="hero-word">RESURFACE.</span>
+        <span class="hero-word">REFINE.</span>
+        <span class="hero-word hero-word--outline">REVEAL.</span>
+      </h1>
+      <p class="hero-tagline">Salon-quality exfoliation at home.<br>Pharmaceutical-grade results.</p>
+    </div>
+    <div class="scroll-indicator">
+      <span class="scroll-label">Scroll to explore</span>
+      <div class="scroll-arrow">
+        <span></span><span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── HERO BG IMAGE ────────────────────────── -->
+  <div id="hero-bg">
+    <img src="Flat_lay_editorial_frasco_sobre_mrmol_blancobeige__delpmaspu.png" alt="Glycolic Acid Pads flat lay">
+  </div>
+
+  <!-- ─── CANVAS (desktop — preloaded frames, smooth scrubbing) ── -->
+  <div class="canvas-wrap" id="canvas-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <!-- ─── VIDEO (mobile autoplay loop fallback) ── -->
+  <div class="video-wrap" id="video-wrap">
+    <video id="product-video" autoplay loop muted playsinline>
+      <source src="Glycolic.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- ─── WHITE OVERLAY (fades canvas for CTA) ─── -->
+  <div id="dark-overlay"></div>
+
+  <!-- ─── MARQUEE ───────────────────────────── -->
+  <div class="marquee-wrap" id="marquee-1">
+    <div class="marquee-text">
+      TEXTURE&nbsp;&nbsp;·&nbsp;&nbsp;ACNE&nbsp;&nbsp;·&nbsp;&nbsp;UNEVEN TONE&nbsp;&nbsp;·&nbsp;&nbsp;WRINKLES&nbsp;&nbsp;·&nbsp;&nbsp;TEXTURE&nbsp;&nbsp;·&nbsp;&nbsp;ACNE&nbsp;&nbsp;·&nbsp;&nbsp;UNEVEN TONE&nbsp;&nbsp;·&nbsp;&nbsp;WRINKLES&nbsp;&nbsp;·&nbsp;&nbsp;TEXTURE&nbsp;&nbsp;·&nbsp;&nbsp;ACNE&nbsp;&nbsp;·&nbsp;&nbsp;
+    </div>
+  </div>
+
+  <!-- ─── SCROLL CONTAINER ──────────────────── -->
+  <div id="scroll-container">
+
+    <!-- 001 / Formula -->
+    <section class="scroll-section section-content align-left"
+             data-enter="10" data-leave="23" data-animation="slide-left">
+      <div class="section-inner">
+        <span class="section-label">001 / Formula</span>
+        <h2 class="section-heading">Pharmaceutical-<br>Grade Exfoliation</h2>
+        <p class="section-body">Our 20% glycolic acid formula penetrates deep to dissolve dead skin cells, clear pores of dirt and excess oil, and reveal the smoother, more radiant skin beneath. Formulated at a pharmaceutical-grade concentration that delivers real, measurable results — not cosmetic promises.</p>
+        <span class="section-note">Dermatologist-tested · pH-balanced formulation</span>
+      </div>
+    </section>
+
+    <!-- 002 / Anti-Ageing -->
+    <section class="scroll-section section-content align-right"
+             data-enter="25" data-leave="38" data-animation="slide-right">
+      <div class="section-inner">
+        <span class="section-label">002 / Anti-Ageing</span>
+        <h2 class="section-heading">Minimise Lines.<br>Restore Elasticity.</h2>
+        <p class="section-body">Consistent exfoliation accelerates cellular turnover and stimulates collagen synthesis — the two mechanisms behind visibly firmer, younger-looking skin. Fine lines soften, skin regains its natural bounce, and the complexion recovers the luminosity lost with age. Visible improvement within 4 weeks of daily use.</p>
+        <span class="section-note">Clinically proven cell renewal pathway</span>
+      </div>
+    </section>
+
+    <!-- 003 / Targets -->
+    <section class="scroll-section section-content align-left"
+             data-enter="40" data-leave="53" data-animation="rotate-in">
+      <div class="section-inner">
+        <span class="section-label">003 / Targets</span>
+        <h2 class="section-heading">Acne. Texture.<br>Tone. Time.</h2>
+        <p class="section-body">Unclogs pores and regulates sebum to prevent acne-causing bacteria. Exfoliates and brightens to correct hyperpigmentation and sun damage. Smooths rough texture and refines enlarged pores. Addresses four distinct skin concerns with a single, daily application — no layering, no conflicting actives.</p>
+        <span class="section-note">4 skin concerns · 1 treatment step</span>
+      </div>
+    </section>
+
+    <!-- 004 / Active Ingredients -->
+    <section class="scroll-section section-content align-right"
+             data-enter="55" data-leave="67" data-animation="slide-right">
+      <div class="section-inner">
+        <span class="section-label">004 / Active Ingredients</span>
+        <h2 class="section-heading">The Science<br>Behind the Skin.</h2>
+        <p class="section-body">Glycolic acid — the smallest AHA molecule — penetrates deeper than any other acid, delivering exceptional exfoliation at the cellular level. Paired with microencapsulated retinol, which releases its active compound gradually through the night for enhanced renewal without the irritation of conventional retinol formulations.</p>
+        <span class="section-note">Glycolic Acid 20% · Microencapsulated Retinol</span>
+      </div>
+    </section>
+
+    <!-- 005 / The Ritual -->
+    <section class="scroll-section section-content align-left"
+             data-enter="69" data-leave="80" data-animation="slide-left">
+      <div class="section-inner">
+        <span class="section-label">005 / The Ritual</span>
+        <h2 class="section-heading">One Step.<br>Every Evening.</h2>
+        <p class="section-body">Swipe a single pre-soaked pad across clean, dry skin before sleep. The precise formula works overnight — no measuring, no mixing, no guesswork. Each of the 60 pads delivers an exact pharmaceutical-grade dose. Wake to visibly smoother, more luminous skin. Morning after morning.</p>
+        <span class="section-note">Apply SPF the following morning</span>
+      </div>
+    </section>
+
+    <!-- CTA (persists) -->
+    <section class="scroll-section section-cta align-center"
+             data-enter="83" data-leave="100" data-animation="clip-reveal" data-persist="true">
+      <div class="cta-inner">
+        <span class="section-label">Visible results within weeks</span>
+        <h2 class="section-heading cta-heading">Begin Your<br><em>Transformation</em></h2>
+        <p class="section-body cta-body">60 pads. 60 evenings. Salon-quality exfoliation delivered at home, at a pharmaceutical concentration trusted by dermatologists. Clearer, smoother, more luminous skin — from the very first use.</p>
+        <div class="cta-buttons">
+          <a href="#" class="cta-button cta-primary">Shop Now</a>
+          <a href="#" class="cta-button cta-secondary">Learn More</a>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /scroll-container -->
+
+  <!-- ─── RITUAL VIDEO SECTION ────────────────── -->
+  <section class="ritual-section" id="ritual">
+    <div class="ritual-inner">
+
+      <header class="ritual-header">
+        <span class="section-label">The Ritual</span>
+        <h2 class="ritual-title">Three Seconds.<br><em>Every Night.</em></h2>
+        <p class="ritual-subtitle">No mixing. No measuring. No guesswork. One pre-soaked pad — and sleep does the rest.</p>
+      </header>
+
+      <div class="ritual-video-wrap">
+        <video autoplay loop muted playsinline>
+          <source src="Exfoliating.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <div class="ritual-steps">
+        <div class="ritual-step">
+          <span class="step-number">01</span>
+          <h3 class="step-title">Take One Pad</h3>
+          <p class="step-body">Each of the 60 pre-soaked pads delivers an exact pharmaceutical-grade dose. Open, take, apply — nothing to measure, nothing to prepare.</p>
+        </div>
+        <div class="ritual-step">
+          <span class="step-number">02</span>
+          <h3 class="step-title">Swipe &amp; Sleep</h3>
+          <p class="step-body">One gentle swipe across clean, dry skin — from the jaw to the temples. The formula works overnight while you rest. No rinsing. No waiting.</p>
+        </div>
+        <div class="ritual-step">
+          <span class="step-number">03</span>
+          <h3 class="step-title">Wake Transformed</h3>
+          <p class="step-body">From the first morning, skin feels noticeably softer to the touch. Within two weeks, texture visibly refines, pores appear smaller, and luminosity returns.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── REVIEWS ───────────────────────────── -->
+  <section class="reviews-section" id="reviews">
+    <div class="reviews-inner">
+
+      <header class="reviews-header">
+        <span class="section-label">Customer Reviews</span>
+        <h2 class="reviews-title">Real Results.<br><em>Real People.</em></h2>
+        <div class="reviews-summary">
+          <span class="summary-score">4.9</span>
+          <div class="summary-stars" aria-label="4.9 out of 5 stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <span class="summary-count">Based on 2,400+ verified reviews</span>
+        </div>
+      </header>
+
+      <div class="reviews-grid">
+
+        <article class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <blockquote class="review-quote">"Visible results within two weeks. My skin texture has completely transformed — smoother, brighter, and the dark spots I've carried for years are finally fading."</blockquote>
+          <footer class="review-footer">
+            <span class="review-author">Sarah M.</span>
+            <span class="review-badge">Verified Purchase</span>
+          </footer>
+        </article>
+
+        <article class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <blockquote class="review-quote">"I've tried every exfoliant on the market. Nothing comes close to this. My acne cleared up in three weeks and my pores look visibly smaller. Absolutely worth it."</blockquote>
+          <footer class="review-footer">
+            <span class="review-author">James R.</span>
+            <span class="review-badge">Verified Purchase</span>
+          </footer>
+        </article>
+
+        <article class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <blockquote class="review-quote">"The encapsulated retinol is a game-changer. No irritation, no peeling — just genuinely smoother skin every single morning. I'll never go back to my old routine."</blockquote>
+          <footer class="review-footer">
+            <span class="review-author">Emma L.</span>
+            <span class="review-badge">Verified Purchase</span>
+          </footer>
+        </article>
+
+        <article class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <blockquote class="review-quote">"As a dermatologist I recommend pharmaceutical-grade actives to my patients. These pads deliver exactly that — convenient, precisely dosed, and genuinely effective."</blockquote>
+          <footer class="review-footer">
+            <span class="review-author">Dr. María C.</span>
+            <span class="review-badge">Dermatologist</span>
+          </footer>
+        </article>
+
+        <article class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <blockquote class="review-quote">"Fine lines around my eyes have softened noticeably after six weeks. My skin feels firmer and looks more luminous. Simple routine, exceptional results."</blockquote>
+          <footer class="review-footer">
+            <span class="review-author">Claudia T.</span>
+            <span class="review-badge">Verified Purchase</span>
+          </footer>
+        </article>
+
+        <article class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <blockquote class="review-quote">"The pre-soaked pads make it so easy. One swipe before bed and I wake up with noticeably clearer skin. It's become the one step I'd never skip."</blockquote>
+          <footer class="review-footer">
+            <span class="review-author">Alejandra V.</span>
+            <span class="review-badge">Verified Purchase</span>
+          </footer>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FINAL PURCHASE BLOCK ─────────────── -->
+  <section class="purchase-section" id="purchase">
+    <div class="purchase-inner">
+
+      <div class="purchase-left">
+        <span class="section-label">Start Tonight</span>
+        <h2 class="purchase-heading">Your Skin<br><em>Won't Wait.</em></h2>
+        <p class="purchase-copy">60 evenings. One step. Pharmaceutical-grade results from the very first use — no appointment, no prescription, no compromise.</p>
+        <div class="purchase-trust">
+          <span>Free shipping over £40</span>
+          <span>Dermatologist tested</span>
+          <span>30-day guarantee</span>
+        </div>
+      </div>
+
+      <div class="purchase-card">
+        <div class="purchase-product-name">Glycolic Acid Pads 20%</div>
+        <div class="purchase-product-size">60 Pads · 1 Month Supply</div>
+        <div class="purchase-rating">
+          <span class="purchase-stars">★★★★★</span>
+          <span class="purchase-rating-count">4.9 · 2,400+ reviews</span>
+        </div>
+        <div class="purchase-price-row">
+          <span class="purchase-price">£34.99</span>
+          <span class="purchase-per">· £0.58 per pad</span>
+        </div>
+        <a href="#" class="cta-button cta-primary purchase-btn">Add to Bag</a>
+        <p class="purchase-code">Code <strong>GLOW20</strong> for 20% off your first order</p>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
