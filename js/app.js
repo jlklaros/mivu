@@ -404,15 +404,7 @@ function setupFloatingCTA() {
   const heroEl = document.getElementById('hero');
   if (heroEl) observer.observe(heroEl);
 
-  /* Smooth-scroll to #purchase on click */
-  btn.addEventListener('click', e => {
-    e.preventDefault();
-    const target = document.getElementById('purchase');
-    if (!target) return;
-    lenis
-      ? lenis.scrollTo(target, { duration: 1.5 })
-      : target.scrollIntoView({ behavior: 'smooth' });
-  });
+  /* Click handled by setupShopify() */
 }
 
 function setupPurchaseCard() {
@@ -452,6 +444,57 @@ function setupRitual() {
    Mobile video scrubbing — controls currentTime via scroll
    (replaces autoplay loop on mobile)
 ───────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────
+   Shopify — fetch live price + connect buy buttons
+───────────────────────────────────────────────────── */
+function setupShopify() {
+  if (typeof ShopifyBuy === 'undefined') return;
+
+  const client = ShopifyBuy.buildClient({
+    domain             : 'j3mvdc-fd.myshopify.com',
+    storefrontAccessToken: 'b9e55c0869752ceea51dd930664222e8',
+  });
+
+  let cachedVariantId = null;
+
+  /* ── Fetch product → update price on page ── */
+  client.product.fetch('8203245387823').then(product => {
+    const variant   = product.variants[0];
+    cachedVariantId = variant.id;
+
+    const priceObj  = variant.priceV2 || variant.price;
+    const amount    = parseFloat(priceObj.amount);
+    const symbol    = priceObj.currencyCode === 'GBP' ? '£'
+                    : priceObj.currencyCode === 'EUR' ? '€' : '$';
+    const formatted = symbol + amount.toFixed(2);
+    const perPad    = symbol + (amount / 60).toFixed(2);
+
+    /* Update every price element on the page */
+    document.querySelectorAll('.floating-price').forEach(el => el.textContent = formatted);
+    document.querySelectorAll('.purchase-price').forEach(el => el.textContent = formatted);
+    document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${perPad} per pad`);
+  }).catch(err => console.warn('Shopify product fetch failed:', err));
+
+  /* ── Create checkout and redirect ── */
+  function goToCheckout(e) {
+    e.preventDefault();
+    if (!cachedVariantId) return;
+
+    client.checkout.create()
+      .then(checkout => client.checkout.addLineItems(checkout.id, [
+        { variantId: cachedVariantId, quantity: 1 }
+      ]))
+      .then(checkout => { window.location.href = checkout.webUrl; })
+      .catch(err => console.warn('Shopify checkout failed:', err));
+  }
+
+  /* ── Wire up all buy buttons ── */
+  [
+    document.getElementById('floating-cta'),
+    ...document.querySelectorAll('.cta-primary, .purchase-btn'),
+  ].forEach(btn => btn && btn.addEventListener('click', goToCheckout));
+}
+
 function setupMobileVideoScrub() {
   const videoEl = document.getElementById('product-video');
   if (!videoEl) return;
@@ -660,6 +703,7 @@ function initExperience() {
   setupFloatingCTA();
   setupPurchaseCard();
   setupNav();
+  setupShopify();
   animateHeroIn();
 }
 
