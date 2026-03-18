@@ -448,6 +448,38 @@ function setupRitual() {
   steps.forEach(step => observer.observe(step));
 }
 
+/* ─────────────────────────────────────────────────────
+   Mobile video scrubbing — controls currentTime via scroll
+   (replaces autoplay loop on mobile)
+───────────────────────────────────────────────────── */
+function setupMobileVideoScrub() {
+  const videoEl = document.getElementById('product-video');
+  if (!videoEl) return;
+
+  /* Pause immediately — autoplay unlocked it for seeking on iOS */
+  const doPause = () => { videoEl.pause(); videoEl.loop = false; };
+  if (videoEl.readyState >= 1) {
+    doPause();
+  } else {
+    videoEl.addEventListener('loadedmetadata', doPause, { once: true });
+  }
+
+  ScrollTrigger.create({
+    trigger : scrollCont,
+    start   : 'top top',
+    end     : 'bottom bottom',
+    onUpdate: self => {
+      const dur = videoEl.duration;
+      if (!dur || !isFinite(dur)) return;
+      const frame      = progressToFrame(self.progress);
+      const targetTime = (frame / FRAME_COUNT) * dur;
+      if (Math.abs(videoEl.currentTime - targetTime) > 0.05) {
+        videoEl.currentTime = targetTime;
+      }
+    }
+  });
+}
+
 function setupReviews() {
   const cards = document.querySelectorAll('.review-card');
   if (!cards.length) return;
@@ -523,7 +555,9 @@ function initExperience() {
   setupSections();
   setupHeroTransition();
 
-  if (!IS_MOBILE) {
+  if (IS_MOBILE) {
+    setupMobileVideoScrub();
+  } else {
     setupFrameBinding();
   }
 

@@ -780,13 +780,19 @@ body {
 @media (max-width: 768px) {
   #scroll-container { height: 750vh; }
 
+  /* Hero bg must sit above video-wrap on mobile */
+  #hero-bg { z-index: 5; }
+
+  /* Video fills screen on mobile */
+  #product-video { object-fit: cover; }
+
   .hero-heading { font-size: clamp(3.8rem, 16vw, 7.5rem); }
   .hero-content { max-width: 92vw; }
 
   .align-left,
   .align-right {
-    padding: 0 6vw;
-    align-items: flex-end;
+    padding: 0 5vw;
+    align-items: center;
   }
 
   .align-left  .section-inner,
@@ -799,9 +805,12 @@ body {
     box-shadow:
       0 2px 24px rgba(0, 0, 0, 0.06),
       inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    padding: 2.2rem 1.8rem;
+    padding: 2rem 1.6rem;
     border-radius: 20px;
   }
+
+  .section-heading { font-size: clamp(1.8rem, 7.5vw, 3rem); }
+  .section-body    { font-size: 0.88rem; line-height: 1.75; }
 
   .stats-grid {
     flex-wrap: wrap;
