@@ -480,6 +480,53 @@ function setupMobileVideoScrub() {
   });
 }
 
+/* ─────────────────────────────────────────────────────
+   Scroll snap — pauses at each section midpoint
+   Fires ~180ms after the user stops wheeling,
+   snaps if within ±7% of a snap point.
+───────────────────────────────────────────────────── */
+const SNAP_POINTS = [
+  0.165,   // 001 Formula       mid = (10+23)/2
+  0.315,   // 002 Anti-Ageing   mid = (25+38)/2
+  0.465,   // 003 Targets       mid = (40+53)/2
+  0.610,   // 004 Ingredients   mid = (55+67)/2
+  0.745,   // 005 The Ritual    mid = (69+80)/2
+  0.915,   // CTA               mid = (83+100)/2
+];
+
+function setupScrollSnap() {
+  if (IS_MOBILE || !lenis) return;
+
+  let wheelTimer = null;
+  let isSnapping = false;
+
+  window.addEventListener('wheel', () => {
+    if (isSnapping) return;
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(() => {
+      const totalH     = scrollCont.offsetHeight;
+      const contTop    = scrollCont.getBoundingClientRect().top + window.scrollY;
+      const scrollable = totalH - window.innerHeight;
+      const p          = Math.max(0, Math.min(1, (window.scrollY - contTop) / scrollable));
+
+      /* Nearest snap point within ±7% */
+      let nearest = null, minDist = 0.07;
+      for (const pt of SNAP_POINTS) {
+        const d = Math.abs(pt - p);
+        if (d < minDist) { minDist = d; nearest = pt; }
+      }
+
+      if (nearest === null) return;
+      isSnapping = true;
+      lenis.scrollTo(contTop + nearest * scrollable, {
+        duration  : 1.1,
+        easing    : t => 1 - Math.pow(1 - t, 3),
+        onComplete: () => { isSnapping = false; }
+      });
+    }, 180);
+  }, { passive: true });
+}
+
 function setupReviews() {
   const cards = document.querySelectorAll('.review-card');
   if (!cards.length) return;
@@ -568,6 +615,7 @@ function initExperience() {
   setupFloatingCTA();
   setupPurchaseCard();
   setupNav();
+  setupScrollSnap();
   animateHeroIn();
 }
 
