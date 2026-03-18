@@ -660,7 +660,6 @@ function initExperience() {
   setupFloatingCTA();
   setupPurchaseCard();
   setupNav();
-  setupScrollSnap();
   animateHeroIn();
 }
 
