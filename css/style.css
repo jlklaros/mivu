@@ -4,12 +4,12 @@
    ===================================================== */
 
 :root {
-  --bg:            #fbfbfd;        /* Apple off-white */
-  --text:          #1d1d1f;        /* Apple near-black */
-  --text-muted:    #6e6e73;        /* Apple secondary gray */
-  --text-dim:      #d2d2d7;        /* Apple light separator */
-  --accent:        #8a6a3e;        /* muted gold — darker for light bg */
-  --accent-light:  #a07840;
+  --bg:            #fbfbfd;
+  --text:          #1d1d1f;
+  --text-muted:    #6e6e73;
+  --text-dim:      #d2d2d7;
+  --accent:        #5b8c7c;        /* MIVU sage-green — dark enough for text & buttons */
+  --accent-light:  #8aaa97;        /* MIVU dot sage — logo colour */
   --font-display:  'Cormorant Garamond', Georgia, serif;
   --font-body:     'DM Sans', system-ui, sans-serif;
 }
@@ -239,17 +239,28 @@ body {
 }
 
 .nav-logo {
-  font-family: var(--font-body);
-  font-size: 0.68rem;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--text);
   text-decoration: none;
-  opacity: 0.75;
+  opacity: 0.85;
   transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 .nav-logo:hover { opacity: 1; }
+
+.nav-logo-img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+/* Header gains background on scroll */
+.site-header.scrolled {
+  background: rgba(251, 251, 253, 0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+}
 
 .nav-links {
   list-style: none;

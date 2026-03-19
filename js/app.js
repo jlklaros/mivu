@@ -678,6 +678,14 @@ function scrollToProgress(progress) {
 }
 
 function setupNav() {
+  /* Header background on scroll */
+  const header = document.querySelector('.site-header');
+  if (header) {
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+  }
+
   document.querySelectorAll('.nav-links a').forEach(link => {
     const text = link.textContent.trim().toLowerCase();
     link.addEventListener('click', e => {
