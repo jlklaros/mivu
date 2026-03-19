@@ -455,8 +455,8 @@ function setupShopify() {
   const TOKEN = 'b9e55c0869752ceea51dd930664222e8';
   const PID   = '8203245387823';
 
-  /* ── Fallback URL — buttons work immediately even if API is slow ── */
-  let cartUrl = `https://${SHOP}/cart`;
+  /* ── Buttons wired immediately with fallback ── */
+  let checkoutUrl = `https://${SHOP}/`;
 
   const allBtns = [
     document.getElementById('floating-cta'),
@@ -465,43 +465,57 @@ function setupShopify() {
 
   allBtns.forEach(btn => btn.addEventListener('click', e => {
     e.preventDefault();
-    window.location.href = cartUrl;
+    window.location.href = checkoutUrl;
   }));
 
-  /* ── Fetch exact variant + USD price in background ── */
-  const query = `query @inContext(country: US) {
-    product(id: "gid://shopify/Product/${PID}") {
-      variants(first: 1) {
-        edges { node { id price { amount currencyCode } } }
-      }
-    }
-  }`;
-
+  /* ── Step 1: fetch product → get variantId + price ── */
   fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
     method : 'POST',
     headers: {
       'Content-Type'                      : 'application/json',
       'X-Shopify-Storefront-Access-Token' : TOKEN,
     },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query: `{
+      product(id: "gid://shopify/Product/${PID}") {
+        variants(first: 1) {
+          edges { node { id price { amount currencyCode } } }
+        }
+      }
+    }` }),
   })
   .then(r => r.json())
   .then(data => {
-    const node      = data.data.product.variants.edges[0].node;
-    const numericId = node.id.split('/').pop();
-    cartUrl         = `https://${SHOP}/cart/${numericId}:1`; /* upgrade URL */
+    const node   = data.data.product.variants.edges[0].node;
+    const amount = parseFloat(node.price.amount);
+    const symbol = node.price.currencyCode === 'GBP' ? '£'
+                 : node.price.currencyCode === 'EUR' ? '€' : '$';
 
-    const amount    = parseFloat(node.price.amount);
-    const symbol    = node.price.currencyCode === 'GBP' ? '£'
-                    : node.price.currencyCode === 'EUR' ? '€' : '$';
-    const formatted = symbol + amount.toFixed(2);
-    const perPad    = symbol + (amount / 60).toFixed(2);
+    document.querySelectorAll('.floating-price').forEach(el => el.textContent = symbol + amount.toFixed(2));
+    document.querySelectorAll('.purchase-price').forEach(el => el.textContent = symbol + amount.toFixed(2));
+    document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${symbol + (amount / 60).toFixed(2)} per pad`);
 
-    document.querySelectorAll('.floating-price').forEach(el => el.textContent = formatted);
-    document.querySelectorAll('.purchase-price').forEach(el => el.textContent = formatted);
-    document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${perPad} per pad`);
+    /* ── Step 2: pre-create a real checkout → get webUrl ── */
+    return fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
+      method : 'POST',
+      headers: {
+        'Content-Type'                      : 'application/json',
+        'X-Shopify-Storefront-Access-Token' : TOKEN,
+      },
+      body: JSON.stringify({ query: `mutation {
+        checkoutCreate(input: {
+          lineItems: [{ variantId: "${node.id}", quantity: 1 }]
+        }) {
+          checkout { webUrl }
+        }
+      }` }),
+    });
   })
-  .catch(err => console.warn('Shopify fetch failed:', err));
+  .then(r => r.json())
+  .then(data => {
+    const url = data?.data?.checkoutCreate?.checkout?.webUrl;
+    if (url) checkoutUrl = url; /* upgrade to real checkout URL */
+  })
+  .catch(err => console.warn('Shopify setup failed:', err));
 }
 
 function setupMobileVideoScrub() {
