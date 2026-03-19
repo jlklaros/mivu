@@ -451,11 +451,24 @@ function setupRitual() {
    Shopify — fetch live price + connect buy buttons
 ───────────────────────────────────────────────────── */
 function setupShopify() {
-  const SHOP   = 'j3mvdc-fd.myshopify.com';
-  const TOKEN  = 'b9e55c0869752ceea51dd930664222e8';
-  const PID    = '8203245387823';
+  const SHOP  = 'j3mvdc-fd.myshopify.com';
+  const TOKEN = 'b9e55c0869752ceea51dd930664222e8';
+  const PID   = '8203245387823';
 
-  /* ── Fetch price in USD via Storefront GraphQL ── */
+  /* ── Fallback URL — buttons work immediately even if API is slow ── */
+  let cartUrl = `https://${SHOP}/cart`;
+
+  const allBtns = [
+    document.getElementById('floating-cta'),
+    ...document.querySelectorAll('.cta-primary, .purchase-btn'),
+  ].filter(Boolean);
+
+  allBtns.forEach(btn => btn.addEventListener('click', e => {
+    e.preventDefault();
+    window.location.href = cartUrl;
+  }));
+
+  /* ── Fetch exact variant + USD price in background ── */
   const query = `query @inContext(country: US) {
     product(id: "gid://shopify/Product/${PID}") {
       variants(first: 1) {
@@ -467,8 +480,8 @@ function setupShopify() {
   fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
     method : 'POST',
     headers: {
-      'Content-Type'                       : 'application/json',
-      'X-Shopify-Storefront-Access-Token'  : TOKEN,
+      'Content-Type'                      : 'application/json',
+      'X-Shopify-Storefront-Access-Token' : TOKEN,
     },
     body: JSON.stringify({ query }),
   })
@@ -476,9 +489,8 @@ function setupShopify() {
   .then(data => {
     const node      = data.data.product.variants.edges[0].node;
     const numericId = node.id.split('/').pop();
-    const cartUrl   = `https://${SHOP}/cart/${numericId}:1`;
+    cartUrl         = `https://${SHOP}/cart/${numericId}:1`; /* upgrade URL */
 
-    /* Update price display */
     const amount    = parseFloat(node.price.amount);
     const symbol    = node.price.currencyCode === 'GBP' ? '£'
                     : node.price.currencyCode === 'EUR' ? '€' : '$';
@@ -488,15 +500,6 @@ function setupShopify() {
     document.querySelectorAll('.floating-price').forEach(el => el.textContent = formatted);
     document.querySelectorAll('.purchase-price').forEach(el => el.textContent = formatted);
     document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${perPad} per pad`);
-
-    /* Wire up all buy buttons → direct cart URL (reliable, no SDK async) */
-    [
-      document.getElementById('floating-cta'),
-      ...document.querySelectorAll('.cta-primary, .purchase-btn'),
-    ].forEach(btn => btn && btn.addEventListener('click', e => {
-      e.preventDefault();
-      window.location.href = cartUrl;
-    }));
   })
   .catch(err => console.warn('Shopify fetch failed:', err));
 }
