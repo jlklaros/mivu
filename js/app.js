@@ -455,27 +455,69 @@ function setupShopify() {
   const TOKEN = 'b9e55c0869752ceea51dd930664222e8';
   const PID   = '8203245387823';
 
-  /* ── Buttons wired immediately with fallback ── */
-  let checkoutUrl = `https://${SHOP}/`;
+  let variantId   = null;   // filled after Step 1
+  let checkoutUrl = null;   // filled after Step 2
 
   const allBtns = [
     document.getElementById('floating-cta'),
     ...document.querySelectorAll('.cta-primary, .purchase-btn'),
   ].filter(Boolean);
 
-  allBtns.forEach(btn => btn.addEventListener('click', e => {
+  /* ── On click: use pre-built URL or build on demand ── */
+  async function handleBuyClick(e) {
     e.preventDefault();
-    window.location.href = checkoutUrl;
-  }));
 
-  /* ── Step 1: fetch product → get variantId + price ── */
+    // Already have URL from background pre-fetch → go immediately
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+      return;
+    }
+
+    // URL not ready yet → build cart now
+    const btn = e.currentTarget;
+    const origText = btn.textContent;
+    btn.textContent = 'Loading…';
+    btn.disabled = true;
+
+    try {
+      // If we don't even have the variant yet, fetch it first
+      if (!variantId) {
+        const r    = await fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
+          body   : JSON.stringify({ query: `{ product(id:"gid://shopify/Product/${PID}") { variants(first:1){ edges{ node{ id } } } } }` }),
+        });
+        const d = await r.json();
+        variantId = d.data.product.variants.edges[0].node.id;
+      }
+
+      const r2   = await fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
+        body   : JSON.stringify({ query: `mutation { cartCreate(input:{ lines:[{ merchandiseId:"${variantId}", quantity:1 }] }) { cart{ checkoutUrl } userErrors{ message } } }` }),
+      });
+      const d2   = await r2.json();
+      console.log('cartCreate response:', JSON.stringify(d2));
+      const url  = d2?.data?.cartCreate?.cart?.checkoutUrl;
+      if (url) { window.location.href = url; return; }
+      console.error('cartCreate userErrors:', d2?.data?.cartCreate?.userErrors);
+    } catch (err) {
+      console.error('Shopify checkout error:', err);
+    }
+
+    // Last-resort fallback
+    btn.textContent = origText;
+    btn.disabled    = false;
+    alert('Could not reach checkout. Please visit mivu-uv.com directly or try again.');
+  }
+
+  allBtns.forEach(btn => btn.addEventListener('click', handleBuyClick));
+
+  /* ── Background: fetch price + pre-build cart URL ── */
   fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
     method : 'POST',
-    headers: {
-      'Content-Type'                      : 'application/json',
-      'X-Shopify-Storefront-Access-Token' : TOKEN,
-    },
-    body: JSON.stringify({ query: `{
+    headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
+    body   : JSON.stringify({ query: `{
       product(id: "gid://shopify/Product/${PID}") {
         variants(first: 1) {
           edges { node { id price { amount currencyCode } } }
@@ -486,6 +528,7 @@ function setupShopify() {
   .then(r => r.json())
   .then(data => {
     const node   = data.data.product.variants.edges[0].node;
+    variantId    = node.id;
     const amount = parseFloat(node.price.amount);
     const symbol = node.price.currencyCode === 'GBP' ? '£'
                  : node.price.currencyCode === 'EUR' ? '€' : '$';
@@ -494,17 +537,11 @@ function setupShopify() {
     document.querySelectorAll('.purchase-price').forEach(el => el.textContent = symbol + amount.toFixed(2));
     document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${symbol + (amount / 60).toFixed(2)} per pad`);
 
-    /* ── Step 2: pre-create cart → get checkoutUrl (uses checkout.shopify.com, avoids domain redirect) ── */
     return fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
       method : 'POST',
-      headers: {
-        'Content-Type'                      : 'application/json',
-        'X-Shopify-Storefront-Access-Token' : TOKEN,
-      },
-      body: JSON.stringify({ query: `mutation {
-        cartCreate(input: {
-          lines: [{ merchandiseId: "${node.id}", quantity: 1 }]
-        }) {
+      headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
+      body   : JSON.stringify({ query: `mutation {
+        cartCreate(input: { lines: [{ merchandiseId: "${node.id}", quantity: 1 }] }) {
           cart { checkoutUrl }
           userErrors { message }
         }
@@ -513,10 +550,11 @@ function setupShopify() {
   })
   .then(r => r.json())
   .then(data => {
+    console.log('Background cartCreate:', JSON.stringify(data));
     const url = data?.data?.cartCreate?.cart?.checkoutUrl;
     if (url) checkoutUrl = url;
   })
-  .catch(err => console.warn('Shopify setup failed:', err));
+  .catch(err => console.warn('Shopify background setup failed:', err));
 }
 
 function setupMobileVideoScrub() {
