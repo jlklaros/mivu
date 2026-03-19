@@ -494,7 +494,7 @@ function setupShopify() {
     document.querySelectorAll('.purchase-price').forEach(el => el.textContent = symbol + amount.toFixed(2));
     document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${symbol + (amount / 60).toFixed(2)} per pad`);
 
-    /* ── Step 2: pre-create a real checkout → get webUrl ── */
+    /* ── Step 2: pre-create cart → get checkoutUrl (uses checkout.shopify.com, avoids domain redirect) ── */
     return fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
       method : 'POST',
       headers: {
@@ -502,18 +502,19 @@ function setupShopify() {
         'X-Shopify-Storefront-Access-Token' : TOKEN,
       },
       body: JSON.stringify({ query: `mutation {
-        checkoutCreate(input: {
-          lineItems: [{ variantId: "${node.id}", quantity: 1 }]
+        cartCreate(input: {
+          lines: [{ merchandiseId: "${node.id}", quantity: 1 }]
         }) {
-          checkout { webUrl }
+          cart { checkoutUrl }
+          userErrors { message }
         }
       }` }),
     });
   })
   .then(r => r.json())
   .then(data => {
-    const url = data?.data?.checkoutCreate?.checkout?.webUrl;
-    if (url) checkoutUrl = url; /* upgrade to real checkout URL */
+    const url = data?.data?.cartCreate?.cart?.checkoutUrl;
+    if (url) checkoutUrl = url;
   })
   .catch(err => console.warn('Shopify setup failed:', err));
 }
@@ -678,12 +679,18 @@ function scrollToProgress(progress) {
 }
 
 function setupNav() {
-  /* Header background on scroll */
+  /* Header background on scroll — Lenis on desktop, window scroll on mobile */
   const header = document.querySelector('.site-header');
   if (header) {
-    window.addEventListener('scroll', () => {
-      header.classList.toggle('scrolled', window.scrollY > 60);
-    }, { passive: true });
+    if (lenis) {
+      lenis.on('scroll', ({ scroll }) => {
+        header.classList.toggle('scrolled', scroll > 60);
+      });
+    } else {
+      window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
+    }
   }
 
   document.querySelectorAll('.nav-links a').forEach(link => {
