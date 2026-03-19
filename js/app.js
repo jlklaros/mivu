@@ -156,13 +156,16 @@ function preloadFrames(onProgress) {
     frames = new Array(FRAME_COUNT + 1);
     let loaded = 0;
 
+    /* Safety timeout — show page after 12 s even if frames are slow */
+    const timeout = setTimeout(resolve, 12000);
+
     for (let i = 1; i <= FRAME_COUNT; i++) {
       const img  = new Image();
       const idx  = i;
       img.onload = img.onerror = () => {
         loaded++;
         onProgress(loaded / FRAME_COUNT);
-        if (loaded === FRAME_COUNT) resolve();
+        if (loaded === FRAME_COUNT) { clearTimeout(timeout); resolve(); }
       };
       img.src = `frames/frame_${String(idx).padStart(4, '0')}.webp`;
       frames[idx] = img;
