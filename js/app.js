@@ -448,51 +448,54 @@ function setupRitual() {
    Shopify — fetch live price + connect buy buttons
 ───────────────────────────────────────────────────── */
 function setupShopify() {
-  if (typeof ShopifyBuy === 'undefined') return;
+  const SHOP   = 'j3mvdc-fd.myshopify.com';
+  const TOKEN  = 'b9e55c0869752ceea51dd930664222e8';
+  const PID    = '8203245387823';
 
-  const client = ShopifyBuy.buildClient({
-    domain             : 'j3mvdc-fd.myshopify.com',
-    storefrontAccessToken: 'b9e55c0869752ceea51dd930664222e8',
-  });
+  /* ── Fetch price in USD via Storefront GraphQL ── */
+  const query = `query @inContext(country: US) {
+    product(id: "gid://shopify/Product/${PID}") {
+      variants(first: 1) {
+        edges { node { id price { amount currencyCode } } }
+      }
+    }
+  }`;
 
-  let cachedVariantId = null;
+  fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
+    method : 'POST',
+    headers: {
+      'Content-Type'                       : 'application/json',
+      'X-Shopify-Storefront-Access-Token'  : TOKEN,
+    },
+    body: JSON.stringify({ query }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    const node      = data.data.product.variants.edges[0].node;
+    const numericId = node.id.split('/').pop();
+    const cartUrl   = `https://${SHOP}/cart/${numericId}:1`;
 
-  /* ── Fetch product → update price on page ── */
-  client.product.fetch('8203245387823').then(product => {
-    const variant   = product.variants[0];
-    cachedVariantId = variant.id;
-
-    const priceObj  = variant.priceV2 || variant.price;
-    const amount    = parseFloat(priceObj.amount);
-    const symbol    = priceObj.currencyCode === 'GBP' ? '£'
-                    : priceObj.currencyCode === 'EUR' ? '€' : '$';
+    /* Update price display */
+    const amount    = parseFloat(node.price.amount);
+    const symbol    = node.price.currencyCode === 'GBP' ? '£'
+                    : node.price.currencyCode === 'EUR' ? '€' : '$';
     const formatted = symbol + amount.toFixed(2);
     const perPad    = symbol + (amount / 60).toFixed(2);
 
-    /* Update every price element on the page */
     document.querySelectorAll('.floating-price').forEach(el => el.textContent = formatted);
     document.querySelectorAll('.purchase-price').forEach(el => el.textContent = formatted);
     document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${perPad} per pad`);
-  }).catch(err => console.warn('Shopify product fetch failed:', err));
 
-  /* ── Create checkout and redirect ── */
-  function goToCheckout(e) {
-    e.preventDefault();
-    if (!cachedVariantId) return;
-
-    client.checkout.create()
-      .then(checkout => client.checkout.addLineItems(checkout.id, [
-        { variantId: cachedVariantId, quantity: 1 }
-      ]))
-      .then(checkout => { window.location.href = checkout.webUrl; })
-      .catch(err => console.warn('Shopify checkout failed:', err));
-  }
-
-  /* ── Wire up all buy buttons ── */
-  [
-    document.getElementById('floating-cta'),
-    ...document.querySelectorAll('.cta-primary, .purchase-btn'),
-  ].forEach(btn => btn && btn.addEventListener('click', goToCheckout));
+    /* Wire up all buy buttons → direct cart URL (reliable, no SDK async) */
+    [
+      document.getElementById('floating-cta'),
+      ...document.querySelectorAll('.cta-primary, .purchase-btn'),
+    ].forEach(btn => btn && btn.addEventListener('click', e => {
+      e.preventDefault();
+      window.location.href = cartUrl;
+    }));
+  })
+  .catch(err => console.warn('Shopify fetch failed:', err));
 }
 
 function setupMobileVideoScrub() {
