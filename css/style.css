@@ -1948,3 +1948,20 @@ body {
   margin-top: 3px;
   line-height: 1.4;
 }
+
+/* ── Ritual lifestyle photo ────────────────────────── */
+.ritual-lifestyle {
+  margin: 3rem auto 0;
+  max-width: 480px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+.ritual-lifestyle-img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+@media (max-width: 600px) {
+  .ritual-lifestyle { max-width: 100%; border-radius: 14px; }
+}
