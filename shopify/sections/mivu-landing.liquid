@@ -1,0 +1,528 @@
+{%- assign lp_product = all_products[section.settings.product_handle] -%}
+{%- assign variant_1pack = lp_product.variants | where: 'title', '1 Pack' | first -%}
+{%- assign variant_2pack = lp_product.variants | where: 'title', '2 Pack' | first -%}
+{%- unless variant_1pack -%}{%- assign variant_1pack = lp_product.variants[0] -%}{%- endunless -%}
+{%- unless variant_2pack -%}{%- assign variant_2pack = lp_product.variants[1] | default: lp_product.variants[0] -%}{%- endunless -%}
+
+<!-- ─── PROMO BANNER ────────────────────────── -->
+<div id="promo-banner">
+  <div class="promo-inner">
+    <span class="promo-label">Limited Offer</span>
+    <p class="promo-text">Limited time offer · <strong>20% off</strong></p>
+    <div class="promo-countdown">
+      <div class="countdown-unit"><span id="cd-days">00</span><small>days</small></div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit"><span id="cd-hours">00</span><small>hrs</small></div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit"><span id="cd-mins">00</span><small>min</small></div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit"><span id="cd-secs">00</span><small>sec</small></div>
+    </div>
+    <button class="promo-close" id="promo-close" aria-label="Close banner">✕</button>
+  </div>
+</div>
+
+<!-- ─── FLOATING CTA ──────────────────────── -->
+<a href="#purchase" class="floating-cta" id="floating-cta">
+  <span class="floating-label">Shop Now — <span class="floating-pack">2 Pack</span></span>
+  <span class="floating-price">{{ variant_2pack.price | money }}</span>
+</a>
+
+<!-- ─── LOADER ─────────────────────────────── -->
+<div id="loader">
+  <div class="loader-brand">MIVU</div>
+  <div class="loader-progress">
+    <div id="loader-bar"></div>
+  </div>
+  <div id="loader-percent">0%</div>
+</div>
+
+<!-- ─── FIXED HEADER ──────────────────────── -->
+<header class="site-header">
+  <nav>
+    <a href="{{ routes.root_url }}" class="nav-logo">
+      <img src="{{ 'MIVU_LOGO.png' | asset_url }}" alt="MIVU" class="nav-logo-img" style="height:32px;width:auto;display:block">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#ritual">Formula</a></li>
+      <li><a href="#results-ba">Results</a></li>
+      <li><a href="#purchase">Shop</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ─── HERO STANDALONE ───────────────────── -->
+<section class="hero-standalone" id="hero">
+  <div class="hero-content">
+    <span class="hero-eyebrow">Glycolic Acid Pads 35%&nbsp;&nbsp;·&nbsp;&nbsp;60 Pads</span>
+    <h1 class="hero-heading">
+      <span class="hero-word">RESURFACE.</span>
+      <span class="hero-word">REFINE.</span>
+      <span class="hero-word hero-word--outline">REVEAL.</span>
+    </h1>
+    <p class="hero-tagline">Salon-quality exfoliation at home.<br>Pharmaceutical-grade results.</p>
+  </div>
+  <div class="scroll-indicator">
+    <span class="scroll-label">Scroll to explore</span>
+    <div class="scroll-arrow">
+      <span></span><span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HERO BG IMAGE ────────────────────────── -->
+<div id="hero-bg">
+  <img src="{{ 'Flat_lay_editorial_frasco_sobre_mrmol_blancobeige__delpmaspu.png' | asset_url }}" alt="Glycolic Acid Pads flat lay">
+</div>
+
+<!-- ─── CANVAS (desktop) ── -->
+<div class="canvas-wrap" id="canvas-wrap">
+  <canvas id="canvas"></canvas>
+</div>
+
+<!-- ─── VIDEO (mobile fallback) ── -->
+<div class="video-wrap" id="video-wrap">
+  <video id="product-video" autoplay loop muted playsinline>
+    <source src="{{ 'Glycolic.mp4' | asset_url }}" type="video/mp4">
+  </video>
+</div>
+
+<!-- ─── WHITE OVERLAY ─── -->
+<div id="dark-overlay"></div>
+
+<!-- ─── MARQUEE ───────────────────────────── -->
+<div class="marquee-wrap" id="marquee-1">
+  <div class="marquee-text">
+    TEXTURE&nbsp;&nbsp;·&nbsp;&nbsp;ACNE&nbsp;&nbsp;·&nbsp;&nbsp;UNEVEN TONE&nbsp;&nbsp;·&nbsp;&nbsp;WRINKLES&nbsp;&nbsp;·&nbsp;&nbsp;TEXTURE&nbsp;&nbsp;·&nbsp;&nbsp;ACNE&nbsp;&nbsp;·&nbsp;&nbsp;UNEVEN TONE&nbsp;&nbsp;·&nbsp;&nbsp;WRINKLES&nbsp;&nbsp;·&nbsp;&nbsp;TEXTURE&nbsp;&nbsp;·&nbsp;&nbsp;ACNE&nbsp;&nbsp;·&nbsp;&nbsp;
+  </div>
+</div>
+
+<!-- ─── SCROLL CONTAINER ──────────────────── -->
+<div id="scroll-container">
+
+  <section class="scroll-section section-content align-left"
+           data-enter="10" data-leave="23" data-animation="slide-left">
+    <div class="section-inner">
+      <span class="section-label">001 / Formula</span>
+      <h2 class="section-heading">Pharmaceutical-<br>Grade Exfoliation</h2>
+      <p class="section-body">Our 35% glycolic acid formula penetrates deep to dissolve dead skin cells, clear pores of dirt and excess oil, and reveal the smoother, more radiant skin beneath. Formulated at a pharmaceutical-grade concentration that delivers real, measurable results — not cosmetic promises.</p>
+      <span class="section-note">Dermatologist-tested · pH-balanced formulation</span>
+    </div>
+  </section>
+
+  <section class="scroll-section section-content align-right"
+           data-enter="25" data-leave="38" data-animation="slide-right">
+    <div class="section-inner">
+      <span class="section-label">002 / Anti-Ageing</span>
+      <h2 class="section-heading">Minimise Lines.<br>Restore Elasticity.</h2>
+      <p class="section-body">Consistent exfoliation accelerates cellular turnover and stimulates collagen synthesis — the two mechanisms behind visibly firmer, younger-looking skin. Fine lines soften, skin regains its natural bounce, and the complexion recovers the luminosity lost with age. Visible improvement within 4 weeks of daily use.</p>
+      <span class="section-note">Clinically proven cell renewal pathway</span>
+    </div>
+  </section>
+
+  <section class="scroll-section section-content align-left"
+           data-enter="40" data-leave="53" data-animation="rotate-in">
+    <div class="section-inner">
+      <span class="section-label">003 / Targets</span>
+      <h2 class="section-heading">Acne. Texture.<br>Tone. Time.</h2>
+      <p class="section-body">Unclogs pores and regulates sebum to prevent acne-causing bacteria. Exfoliates and brightens to correct hyperpigmentation and sun damage. Smooths rough texture and refines enlarged pores. Addresses four distinct skin concerns with a single, daily application — no layering, no conflicting actives.</p>
+      <span class="section-note">4 skin concerns · 1 treatment step</span>
+    </div>
+  </section>
+
+  <section class="scroll-section section-content align-right"
+           data-enter="55" data-leave="67" data-animation="slide-right">
+    <div class="section-inner">
+      <span class="section-label">004 / Active Ingredients</span>
+      <h2 class="section-heading">The Science<br>Behind the Skin.</h2>
+      <p class="section-body">Glycolic acid — the smallest AHA molecule — penetrates deeper than any other acid, delivering exceptional exfoliation at the cellular level. Paired with microencapsulated retinol, which releases its active compound gradually through the night for enhanced renewal without the irritation of conventional retinol formulations.</p>
+      <span class="section-note">Glycolic Acid 35% · Microencapsulated Retinol</span>
+    </div>
+  </section>
+
+  <section class="scroll-section section-content align-left"
+           data-enter="69" data-leave="80" data-animation="slide-left">
+    <div class="section-inner">
+      <span class="section-label">005 / The Ritual</span>
+      <h2 class="section-heading">One Step.<br>Every Evening.</h2>
+      <p class="section-body">Swipe a single pre-soaked pad across clean, dry skin before sleep. The precise formula works overnight — no measuring, no mixing, no guesswork. Each of the 60 pads delivers an exact pharmaceutical-grade dose. Wake to visibly smoother, more luminous skin. Morning after morning.</p>
+      <span class="section-note">Apply SPF the following morning</span>
+    </div>
+  </section>
+
+  <section class="scroll-section section-cta align-center"
+           data-enter="83" data-leave="100" data-animation="clip-reveal" data-persist="true">
+    <div class="cta-inner">
+      <span class="section-label">Visible results within weeks</span>
+      <h2 class="section-heading cta-heading">Begin Your<br><em>Transformation</em></h2>
+      <p class="section-body cta-body">60 pads. 60 evenings. Salon-quality exfoliation delivered at home, at a pharmaceutical concentration trusted by dermatologists. Clearer, smoother, more luminous skin — from the very first use.</p>
+      <div class="cta-buttons">
+        <a href="#purchase" class="cta-button cta-primary">Shop Now</a>
+        <a href="#ritual" class="cta-button cta-secondary">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /scroll-container -->
+
+<!-- ─── PURCHASE BLOCK ─────────────── -->
+<section class="purchase-section" id="purchase">
+  <div class="purchase-inner">
+
+    <div class="purchase-left">
+      <span class="section-label">Start Tonight</span>
+      <h2 class="purchase-heading">Your Skin<br><em>Won't Wait.</em></h2>
+      <p class="purchase-copy">60 evenings. One step. Pharmaceutical-grade results from the very first use — no appointment, no prescription, no compromise.</p>
+      <div class="purchase-trust">
+        <span>Free shipping over $40</span>
+        <span>Dermatologist tested</span>
+      </div>
+    </div>
+
+    <div class="purchase-card">
+      <img src="{{ 'Flat_lay_editorial_frasco_sobre_mrmol_blancobeige__delpmaspu.png' | asset_url }}" alt="Glycolic Acid Pads 35%" class="purchase-product-img">
+      <div class="purchase-product-name">Glycolic Acid Pads 35%</div>
+      <div class="purchase-rating">
+        <span class="purchase-stars">★★★★★</span>
+        <span class="purchase-rating-count">4.9 · 2,400+ reviews</span>
+      </div>
+
+      <div class="pack-selector">
+        <button class="pack-option"
+                data-variant="{{ variant_1pack.id }}"
+                data-price="{{ variant_1pack.price | money }}"
+                data-per="$0.83">
+          <div class="pack-top">
+            <span class="pack-qty">1 Pack</span>
+            <span class="pack-price">{{ variant_1pack.price | money }}</span>
+          </div>
+          <div class="pack-desc">60 Pads · 1 Month Supply</div>
+        </button>
+        <button class="pack-option pack-option--selected"
+                data-variant="{{ variant_2pack.id }}"
+                data-price="{{ variant_2pack.price | money }}"
+                data-per="$0.75">
+          <span class="pack-badge">Most Popular</span>
+          <div class="pack-top">
+            <span class="pack-qty">2 Pack</span>
+            <span class="pack-price">{{ variant_2pack.price | money }}</span>
+          </div>
+          <div class="pack-desc">120 Pads · 2 Months · <strong>Save $10</strong></div>
+        </button>
+      </div>
+
+      <div class="purchase-price-row">
+        <span class="purchase-pack-label">2 Pack</span>
+        <span class="purchase-price">{{ variant_2pack.price | money }}</span>
+        <span class="purchase-per">· $0.75 per pad</span>
+      </div>
+
+      <form action="/cart/add" method="post" id="mivu-cart-form">
+        <input type="hidden" name="id" id="mivu-variant-id" value="{{ variant_2pack.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="cta-button cta-primary purchase-btn">Add to Bag</button>
+      </form>
+
+      <div class="payment-methods">
+        <span class="pay-label">Secure checkout</span>
+        <div class="pay-icons">
+          <span class="pay-icon">VISA</span>
+          <span class="pay-icon">MC</span>
+          <span class="pay-icon">PayPal</span>
+          <span class="pay-icon">Apple Pay</span>
+        </div>
+      </div>
+      <p class="purchase-code">Limited time offer · 20% off · Free shipping</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── EDITORIAL GALLERY ───────────────────── -->
+<section class="gallery-section" id="gallery">
+  <div class="gallery-inner">
+
+    <header class="gallery-head">
+      <span class="section-label">The Experience</span>
+      <h2 class="gallery-title">Science you can<br><em>see and feel.</em></h2>
+    </header>
+
+    <div class="ed-block ed-block--img-left">
+      <div class="ed-img-wrap">
+        <img src="{{ 'Core_Subject__A_202603202141.png' | asset_url }}" alt="Applying MIVU glycolic pad" class="ed-img">
+      </div>
+      <div class="ed-text">
+        <span class="section-label">The Ritual</span>
+        <h3 class="ed-heading">One Pad.<br><em>Every Night.</em></h3>
+        <p class="ed-body">Swipe once across clean skin before bed. The pharmaceutical-grade glycolic acid works while you sleep — no rinsing, no waiting, no guesswork. Wake up to skin that's visibly smoother from the very first use.</p>
+        <p class="ed-quote">"I've tried every AHA on the market. Nothing comes close."</p>
+        <span class="ed-attribution">— Sofia R., verified buyer</span>
+      </div>
+    </div>
+
+    <div class="ed-block ed-block--img-right">
+      <div class="ed-text">
+        <span class="section-label">The Formula</span>
+        <h3 class="ed-heading">35% Glycolic.<br><em>Pharmaceutical Grade.</em></h3>
+        <p class="ed-body">Most over-the-counter acids cap at 10–15%. MIVU delivers 35% — the concentration dermatologists actually use — in a pre-measured, pre-soaked pad. No dilution, no measuring, no mess.</p>
+        <ul class="ed-list">
+          <li>Dissolves dead skin cells on contact</li>
+          <li>Unclogs pores and reduces blackheads</li>
+          <li>Stimulates collagen for long-term firmness</li>
+        </ul>
+      </div>
+      <div class="ed-img-wrap">
+        <img src="{{ 'gallery-product.jpg' | asset_url }}" alt="MIVU product flat lay" class="ed-img">
+      </div>
+    </div>
+
+    <div class="ed-block ed-block--img-left">
+      <div class="ed-img-wrap">
+        <img src="{{ 'gallery-results.jpg' | asset_url }}" alt="Skin results before and after" class="ed-img">
+      </div>
+      <div class="ed-text">
+        <span class="section-label">The Results</span>
+        <h3 class="ed-heading">Visible in<br><em>Days. Not Months.</em></h3>
+        <p class="ed-body">87% of users report visibly smoother texture within the first two weeks. Pores appear smaller. Tone evens out. Fine lines soften. Real results you can see — not just feel.</p>
+        <p class="ed-quote">"My dermatologist asked what I'd been doing differently."</p>
+        <span class="ed-attribution">— Camila T., 6 weeks in</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── RITUAL VIDEO SECTION ────────────────── -->
+<section class="ritual-section" id="ritual">
+  <div class="ritual-inner">
+    <header class="ritual-header">
+      <span class="section-label">The Ritual</span>
+      <h2 class="ritual-title">Three Seconds.<br><em>Every Night.</em></h2>
+      <p class="ritual-subtitle">No mixing. No measuring. No guesswork. One pre-soaked pad — and sleep does the rest.</p>
+    </header>
+    <div class="ritual-video-wrap">
+      <video autoplay loop muted playsinline>
+        <source src="{{ 'Exfoliating.mp4' | asset_url }}" type="video/mp4">
+      </video>
+    </div>
+    <div class="ritual-steps">
+      <div class="ritual-step">
+        <span class="step-number">01</span>
+        <h3 class="step-title">Take One Pad</h3>
+        <p class="step-body">Each of the 60 pre-soaked pads delivers an exact pharmaceutical-grade dose. Open, take, apply — nothing to measure, nothing to prepare.</p>
+      </div>
+      <div class="ritual-step">
+        <span class="step-number">02</span>
+        <h3 class="step-title">Swipe &amp; Sleep</h3>
+        <p class="step-body">One gentle swipe across clean, dry skin — from the jaw to the temples. The formula works overnight while you rest. No rinsing. No waiting.</p>
+      </div>
+      <div class="ritual-step">
+        <span class="step-number">03</span>
+        <h3 class="step-title">Wake Transformed</h3>
+        <p class="step-body">From the first morning, skin feels noticeably softer to the touch. Within two weeks, texture visibly refines, pores appear smaller, and luminosity returns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── REVIEWS ───────────────────────────── -->
+<section class="reviews-section" id="reviews">
+  <div class="reviews-inner">
+    <header class="reviews-header">
+      <span class="section-label">Customer Reviews</span>
+      <h2 class="reviews-title">Real Results.<br><em>Real People.</em></h2>
+      <div class="reviews-summary">
+        <span class="summary-score">4.9</span>
+        <div class="summary-stars" aria-label="4.9 out of 5 stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <span class="summary-count">Based on 2,400+ verified reviews</span>
+      </div>
+    </header>
+    <div class="reviews-grid">
+      <article class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote class="review-quote">"Visible results within two weeks. My skin texture has completely transformed — smoother, brighter, and the dark spots I've carried for years are finally fading."</blockquote>
+        <footer class="review-footer">
+          <span class="review-author">Sarah M.</span>
+          <span class="review-badge">Verified Purchase</span>
+        </footer>
+      </article>
+      <article class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote class="review-quote">"I've tried every exfoliant on the market. Nothing comes close to this. My acne cleared up in three weeks and my pores look visibly smaller. Absolutely worth it."</blockquote>
+        <footer class="review-footer">
+          <span class="review-author">James R.</span>
+          <span class="review-badge">Verified Purchase</span>
+        </footer>
+      </article>
+      <article class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote class="review-quote">"The encapsulated retinol is a game-changer. No irritation, no peeling — just genuinely smoother skin every single morning. I'll never go back to my old routine."</blockquote>
+        <footer class="review-footer">
+          <span class="review-author">Emma L.</span>
+          <span class="review-badge">Verified Purchase</span>
+        </footer>
+      </article>
+      <article class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote class="review-quote">"As a dermatologist I recommend pharmaceutical-grade actives to my patients. These pads deliver exactly that — convenient, precisely dosed, and genuinely effective."</blockquote>
+        <footer class="review-footer">
+          <span class="review-author">Dr. María C.</span>
+          <span class="review-badge">Dermatologist</span>
+        </footer>
+      </article>
+      <article class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote class="review-quote">"Fine lines around my eyes have softened noticeably after six weeks. My skin feels firmer and looks more luminous. Simple routine, exceptional results."</blockquote>
+        <footer class="review-footer">
+          <span class="review-author">Claudia T.</span>
+          <span class="review-badge">Verified Purchase</span>
+        </footer>
+      </article>
+      <article class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <blockquote class="review-quote">"The pre-soaked pads make it so easy. One swipe before bed and I wake up with noticeably clearer skin. It's become the one step I'd never skip."</blockquote>
+        <footer class="review-footer">
+          <span class="review-author">Alejandra V.</span>
+          <span class="review-badge">Verified Purchase</span>
+        </footer>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ─── RESULTS & TIMELINE ──────────────────── -->
+<section class="results-section" id="results-ba">
+  <div class="results-inner">
+    <header class="results-header">
+      <span class="section-label">Clinical Evidence</span>
+      <h2 class="results-title">The Evidence.<br><em>On Your Skin.</em></h2>
+      <p class="results-subtitle">Results based on a 60-person consumer trial using the full 60-pad regimen.</p>
+    </header>
+    <div class="stats-grid">
+      <div class="stat-card"><span class="stat-number">87%</span><span class="stat-label">reported visibly smoother skin after 2 weeks</span></div>
+      <div class="stat-card"><span class="stat-number">92%</span><span class="stat-label">saw reduced pore appearance after 4 weeks</span></div>
+      <div class="stat-card"><span class="stat-number">4 wks</span><span class="stat-label">average time to visible fine line reduction</span></div>
+      <div class="stat-card"><span class="stat-number">2,400+</span><span class="stat-label">verified customers — 4.9 average rating</span></div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="timeline-week">Night 1</span>
+        <h3 class="timeline-title">First Contact</h3>
+        <p class="timeline-body">The formula activates immediately on contact. Skin tingles briefly — a sign the glycolic acid is working. Wash off sensation gone by morning.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-week">Week 1–2</span>
+        <h3 class="timeline-title">Surface Renewal</h3>
+        <p class="timeline-body">Dead skin layer clears. Texture becomes measurably smoother to the touch. Dullness recedes. Pores begin to appear smaller and cleaner.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-week">Week 3–4</span>
+        <h3 class="timeline-title">Deep Correction</h3>
+        <p class="timeline-body">Cellular turnover accelerates. Fine lines soften. Hyperpigmentation and sun spots begin to fade. The retinol starts its overnight renewal cycle.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-week">Week 5–8</span>
+        <h3 class="timeline-title">Full Transformation</h3>
+        <p class="timeline-body">Collagen synthesis is stimulated. Skin firms and regains elasticity. Luminosity returns — the kind that used to require a salon appointment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMPARISON TABLE ──────────────────────── -->
+<section class="comparison-section" id="comparison">
+  <div class="comparison-inner">
+    <header class="comparison-header">
+      <span class="section-label">Why MIVU</span>
+      <h2 class="comparison-title">Salon Results.<br><em>Home Simplicity.</em></h2>
+      <p class="comparison-subtitle">Professional-grade exfoliation without the appointment, the downtime, or the price.</p>
+    </header>
+    <div class="comp-table">
+      <div class="comp-col comp-labels">
+        <div class="comp-cell comp-cell-header">&nbsp;</div>
+        <div class="comp-cell">Concentration</div>
+        <div class="comp-cell">Cost per use</div>
+        <div class="comp-cell">Time required</div>
+        <div class="comp-cell">Efficacy</div>
+        <div class="comp-cell">Convenience</div>
+        <div class="comp-cell">Irritation risk</div>
+      </div>
+      <div class="comp-col comp-col-mivu">
+        <div class="comp-cell comp-cell-header">MIVU</div>
+        <div class="comp-cell">35% Glycolic + Retinol</div>
+        <div class="comp-cell">{{ variant_1pack.price | money_without_currency | divided_by: 60.0 | round: 2 }} / pad</div>
+        <div class="comp-cell">3 seconds</div>
+        <div class="comp-cell comp-yes">Clinical-grade ✓</div>
+        <div class="comp-cell comp-yes">At home ✓</div>
+        <div class="comp-cell comp-yes">pH balanced ✓</div>
+      </div>
+      <div class="comp-col">
+        <div class="comp-cell comp-cell-header">Salon Peel</div>
+        <div class="comp-cell">30–70%</div>
+        <div class="comp-cell">$80–$200</div>
+        <div class="comp-cell">60–90 min</div>
+        <div class="comp-cell comp-yes">Effective ✓</div>
+        <div class="comp-cell comp-no">Appointment ✗</div>
+        <div class="comp-cell comp-no">High risk ✗</div>
+      </div>
+      <div class="comp-col">
+        <div class="comp-cell comp-cell-header">Other AHAs</div>
+        <div class="comp-cell">5–10%</div>
+        <div class="comp-cell">$0.25–$0.67</div>
+        <div class="comp-cell">10–15 min</div>
+        <div class="comp-cell comp-no">Mild only ✗</div>
+        <div class="comp-cell comp-yes">At home ✓</div>
+        <div class="comp-cell comp-yes">Low risk ✓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ───────────────────────────────────── -->
+<section class="faq-section" id="faq">
+  <div class="faq-inner">
+    <header class="faq-header">
+      <span class="section-label">Questions Answered</span>
+      <h2 class="faq-title">Everything You<br><em>Need to Know.</em></h2>
+    </header>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Is this safe for sensitive skin?</button>
+        <div class="faq-answer"><div class="faq-answer-inner"><p>Our formula is pH-balanced and dermatologist-tested to minimise irritation. If you have very sensitive skin, start every other day and gradually increase to daily use. If you experience persistent redness, discontinue and consult a dermatologist.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">How soon will I see results?</button>
+        <div class="faq-answer"><div class="faq-answer-inner"><p>Most customers notice softer, smoother skin from the very first morning. Visible improvements in texture and pore size typically appear within 2 weeks. For fine line reduction and significant brightening, allow 4–6 weeks of consistent daily use.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Can I use this if I have active acne?</button>
+        <div class="faq-answer"><div class="faq-answer-inner"><p>Yes. Glycolic acid is one of the most effective over-the-counter treatments for acne. It unclogs pores, regulates sebum, and reduces acne-causing bacteria. Avoid applying to open wounds or active cysts — apply to surrounding skin only.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Do I need to use SPF the next morning?</button>
+        <div class="faq-answer"><div class="faq-answer-inner"><p>Yes — this is essential. Glycolic acid increases photosensitivity. Apply the pad in the evening before sleep, and use a broad-spectrum SPF 30 or higher every morning. Skipping SPF while using acid-based products can cause hyperpigmentation.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">How long does one box last?</button>
+        <div class="faq-answer"><div class="faq-answer-inner"><p>Each box contains 60 individually sealed pads — a full 2-month supply for daily use, or 4 months every other day. Each pad is pre-dosed, so there's nothing to measure or prepare. One simple step, every evening.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MIVU Landing Page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "product_handle",
+      "label": "Product Handle",
+      "default": "glycolic-acid-pads-35",
+      "info": "Found in Shopify Admin → Products → your product URL slug"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,12 @@
+{
+  "layout": "mivu-landing",
+  "sections": {
+    "main": {
+      "type": "mivu-landing",
+      "settings": {
+        "product_handle": "glycolic-acid-pads-35"
+      }
+    }
+  },
+  "order": ["main"]
+}
