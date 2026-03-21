@@ -1980,120 +1980,113 @@ body {
 }
 
 /* ── LIFESTYLE GALLERY ──────────────────────────── */
+/* ── EDITORIAL GALLERY ─────────────────────────── */
 .gallery-section {
   position: relative;
   z-index: 20;
-  padding: 100px 40px;
   background: var(--cream);
-}
-.gallery-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.gallery-header {
-  text-align: center;
-  margin-bottom: 60px;
-}
-.gallery-title {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 300;
-  color: var(--charcoal);
-  margin-top: 12px;
-}
-.gallery-title em { font-style: italic; color: var(--sage); }
-
-/* Hero split */
-.gallery-hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: center;
-  margin-bottom: 32px;
-}
-.gallery-hero-img {
-  border-radius: 12px;
   overflow: hidden;
 }
-.gallery-hero-img .gallery-img {
+
+/* Each editorial block */
+.ed-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  min-height: 620px;
+}
+.ed-block--img-left  { grid-template-areas: "img text"; }
+.ed-block--img-right { grid-template-areas: "text img"; }
+
+.ed-img-wrap {
+  grid-area: img;
+  overflow: hidden;
+  height: 100%;
+  min-height: 500px;
+}
+.ed-img {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  height: 100%;
   object-fit: cover;
   object-position: center top;
   display: block;
+  transition: transform 0.7s ease;
 }
-.gallery-hero-text {
-  padding: 40px;
+.ed-img-wrap:hover .ed-img { transform: scale(1.03); }
+
+.ed-text {
+  grid-area: text;
+  padding: 80px 72px;
 }
-.gallery-quote {
+
+.ed-heading {
   font-family: var(--serif);
-  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-size: clamp(2rem, 3.5vw, 3rem);
   font-weight: 300;
+  color: var(--charcoal);
+  line-height: 1.15;
+  margin: 10px 0 24px;
+}
+.ed-heading em { font-style: italic; color: var(--sage); }
+
+.ed-body {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  max-width: 42ch;
+}
+
+.ed-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ed-list li {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  padding-left: 20px;
+  position: relative;
+}
+.ed-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--sage);
+}
+
+.ed-quote {
+  font-family: var(--serif);
+  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
   font-style: italic;
+  font-weight: 300;
   color: var(--charcoal);
   line-height: 1.5;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
-.gallery-attribution {
-  font-size: 0.8rem;
+.ed-attribution {
+  font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--sage);
 }
 
-/* 3-col grid */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  align-items: start;
-}
-.gallery-cell {
-  border-radius: 12px;
-  overflow: hidden;
-}
-.gallery-cell--tall {
-  grid-row: span 2;
-}
-/* Base img — width drives layout, no height:100% */
-.gallery-img {
-  width: 100%;
-  display: block;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-/* Each cell defines the aspect ratio on the img directly */
-.gallery-cell .gallery-img         { aspect-ratio: 1 / 1; }
-.gallery-cell--tall .gallery-img   { aspect-ratio: 1 / 2; }
-.gallery-img:hover { transform: scale(1.04); }
-
-/* Visible placeholders */
-.gallery-placeholder {
-  width: 100%;
-  height: 100%;
-  min-height: 280px;
-  background: linear-gradient(135deg, #e8e0d8 0%, #cfc4b9 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-}
-.gallery-placeholder span {
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #9e9088;
-  text-align: center;
-  line-height: 1.6;
-}
+/* Alternating background tint */
+.ed-block:nth-child(even) { background: var(--bg); }
 
 @media (max-width: 900px) {
-  .gallery-hero { grid-template-columns: 1fr; }
-  .gallery-hero-img { aspect-ratio: 4/3; }
-  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 240px; }
-  .gallery-cell--tall { grid-row: span 1; }
+  .ed-block {
+    grid-template-columns: 1fr;
+    grid-template-areas: "img" "text" !important;
+    min-height: auto;
+  }
+  .ed-img-wrap { min-height: 320px; }
+  .ed-text { padding: 48px 32px; }
 }
 @media (max-width: 600px) {
-  .gallery-section { padding: 60px 20px; }
-  .gallery-grid { grid-template-columns: 1fr; grid-template-rows: 220px; }
+  .ed-text { padding: 40px 24px; }
+  .ed-img-wrap { min-height: 260px; }
 }
