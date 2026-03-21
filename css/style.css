@@ -1981,6 +1981,8 @@ body {
 
 /* ── LIFESTYLE GALLERY ──────────────────────────── */
 .gallery-section {
+  position: relative;
+  z-index: 20;
   padding: 100px 40px;
   background: var(--cream);
 }
