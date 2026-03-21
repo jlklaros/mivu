@@ -455,12 +455,63 @@ function setupShopify() {
   const TOKEN = 'b9e55c0869752ceea51dd930664222e8';
 
   const PACKS = {
-    '1pack': { variantId: 'gid://shopify/ProductVariant/45061957058607', price: '$50.00', per: '$0.83' },
-    '2pack': { variantId: 'gid://shopify/ProductVariant/45078396436527', price: '$90.00', per: '$0.75' },
+    '1pack': { variantId: 'gid://shopify/ProductVariant/45061957058607', price: '$50.00', per: null },
+    '2pack': { variantId: 'gid://shopify/ProductVariant/45078396436527', price: '$90.00', per: null },
   };
 
   let selectedVariantId = PACKS['2pack'].variantId;  // default: 2-pack
   let checkoutUrl       = null;                       // cached for current selection
+
+  /* ── Fetch live prices from Shopify and update all price elements ── */
+  const variantIds = [PACKS['1pack'].variantId, PACKS['2pack'].variantId];
+  fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
+    method : 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
+    body   : JSON.stringify({ query: `{
+      nodes(ids: ${JSON.stringify(variantIds)}) {
+        ... on ProductVariant {
+          id
+          price { amount currencyCode }
+          compareAtPrice { amount }
+        }
+      }
+    }` }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    const nodes = data?.data?.nodes || [];
+    nodes.forEach(variant => {
+      if (!variant?.price) return;
+      const amount = parseFloat(variant.price.amount);
+      const formatted = '$' + amount.toFixed(2).replace(/\.00$/, '');
+
+      if (variant.id === PACKS['1pack'].variantId) {
+        PACKS['1pack'].price = formatted;
+        // update 1-pack button display
+        const btn1 = document.querySelector(`.pack-option[data-variant="${PACKS['1pack'].variantId}"]`);
+        if (btn1) {
+          btn1.dataset.price = formatted;
+          const el = btn1.querySelector('.pack-price');
+          if (el) el.textContent = formatted;
+        }
+      }
+
+      if (variant.id === PACKS['2pack'].variantId) {
+        PACKS['2pack'].price = formatted;
+        // update 2-pack button display
+        const btn2 = document.querySelector(`.pack-option[data-variant="${PACKS['2pack'].variantId}"]`);
+        if (btn2) {
+          btn2.dataset.price = formatted;
+          const el = btn2.querySelector('.pack-price');
+          if (el) el.textContent = formatted;
+        }
+        // update main price row and floating CTA (2-pack is the default selected)
+        document.querySelectorAll('.purchase-price').forEach(el => el.textContent = formatted);
+        document.querySelectorAll('.floating-price').forEach(el => el.textContent = formatted);
+      }
+    });
+  })
+  .catch(err => console.warn('Could not fetch live prices:', err));
 
   /* ── Pack selector interaction ── */
   document.querySelectorAll('.pack-option').forEach(btn => {
