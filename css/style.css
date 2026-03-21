@@ -2012,19 +2012,13 @@ body {
 .gallery-hero-img {
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 3/4;
 }
 .gallery-hero-img .gallery-img {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
   object-position: center top;
   display: block;
-  position: absolute;
-  inset: 0;
-}
-.gallery-hero-img {
-  position: relative;
 }
 .gallery-hero-text {
   padding: 40px;
@@ -2055,18 +2049,20 @@ body {
 .gallery-cell {
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 1 / 1;
 }
 .gallery-cell--tall {
-  aspect-ratio: 1 / 2;
+  grid-row: span 2;
 }
+/* Base img — width drives layout, no height:100% */
 .gallery-img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
   display: block;
+  object-fit: cover;
   transition: transform 0.5s ease;
 }
+/* Each cell defines the aspect ratio on the img directly */
+.gallery-cell .gallery-img         { aspect-ratio: 1 / 1; }
+.gallery-cell--tall .gallery-img   { aspect-ratio: 1 / 2; }
 .gallery-img:hover { transform: scale(1.04); }
 
 /* Visible placeholders */
