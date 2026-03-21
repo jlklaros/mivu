@@ -1900,3 +1900,51 @@ body {
   .faq-section    { padding: 5rem 5vw 5rem; }
   .faq-question   { font-size: 1.1rem; padding: 1.4rem 0; }
 }
+
+/* ── Pack Selector ─────────────────────────────────── */
+.pack-selector {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0 10px;
+}
+.pack-option {
+  flex: 1;
+  position: relative;
+  background: #faf9f6;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.pack-option:hover { border-color: var(--sage); }
+.pack-option--selected {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(143,173,143,0.22);
+}
+.pack-badge {
+  display: inline-block;
+  background: var(--sage);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.pack-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.pack-qty  { font-weight: 700; font-size: 0.95rem; color: var(--ink); }
+.pack-price{ font-weight: 700; font-size: 0.95rem; color: var(--ink); }
+.pack-desc {
+  font-size: 0.75rem;
+  color: var(--muted, #888);
+  margin-top: 3px;
+  line-height: 1.4;
+}

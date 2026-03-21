@@ -448,15 +448,35 @@ function setupRitual() {
    (replaces autoplay loop on mobile)
 ───────────────────────────────────────────────────── */
 /* ─────────────────────────────────────────────────────
-   Shopify — fetch live price + connect buy buttons
+   Shopify — pack selector + buy buttons
 ───────────────────────────────────────────────────── */
 function setupShopify() {
   const SHOP  = 'j3mvdc-fd.myshopify.com';
   const TOKEN = 'b9e55c0869752ceea51dd930664222e8';
-  const PID   = '8203245387823';
 
-  let variantId   = null;   // filled after Step 1
-  let checkoutUrl = null;   // filled after Step 2
+  const PACKS = {
+    '1pack': { variantId: 'gid://shopify/ProductVariant/45061957058607', price: '$50.00', per: '$0.83' },
+    '2pack': { variantId: 'gid://shopify/ProductVariant/45078396436527', price: '$90.00', per: '$0.75' },
+  };
+
+  let selectedVariantId = PACKS['2pack'].variantId;  // default: 2-pack
+  let checkoutUrl       = null;                       // cached for current selection
+
+  /* ── Pack selector interaction ── */
+  document.querySelectorAll('.pack-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pack-option').forEach(b => b.classList.remove('pack-option--selected'));
+      btn.classList.add('pack-option--selected');
+      const newVariant = btn.dataset.variant;
+      if (newVariant !== selectedVariantId) {
+        selectedVariantId = newVariant;
+        checkoutUrl = null;  // invalidate cached URL for old selection
+        document.querySelectorAll('.purchase-price').forEach(el => el.textContent = btn.dataset.price);
+        document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${btn.dataset.per} per pad`);
+        document.querySelectorAll('.floating-price').forEach(el => el.textContent = btn.dataset.price);
+      }
+    });
+  });
 
   const allBtns = [
     document.getElementById('floating-cta'),
@@ -467,45 +487,28 @@ function setupShopify() {
   async function handleBuyClick(e) {
     e.preventDefault();
 
-    // Already have URL from background pre-fetch → go immediately
-    if (checkoutUrl) {
-      window.location.href = checkoutUrl;
-      return;
-    }
+    if (checkoutUrl) { window.location.href = checkoutUrl; return; }
 
-    // URL not ready yet → build cart now
     const btn = e.currentTarget;
     const origText = btn.textContent;
     btn.textContent = 'Loading…';
     btn.disabled = true;
 
     try {
-      // If we don't even have the variant yet, fetch it first
-      if (!variantId) {
-        const r    = await fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
-          method : 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
-          body   : JSON.stringify({ query: `{ product(id:"gid://shopify/Product/${PID}") { variants(first:1){ edges{ node{ id } } } } }` }),
-        });
-        const d = await r.json();
-        variantId = d.data.product.variants.edges[0].node.id;
-      }
-
-      const r2   = await fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
+      const r = await fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
         method : 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
-        body   : JSON.stringify({ query: `mutation { cartCreate(input:{ lines:[{ merchandiseId:"${variantId}", quantity:1 }] }) { cart{ checkoutUrl } userErrors{ message } } }` }),
+        body   : JSON.stringify({ query: `mutation { cartCreate(input:{ lines:[{ merchandiseId:"${selectedVariantId}", quantity:1 }] }) { cart{ checkoutUrl } userErrors{ message } } }` }),
       });
-      const d2   = await r2.json();
-      console.log('cartCreate response:', JSON.stringify(d2));
-      const url  = d2?.data?.cartCreate?.cart?.checkoutUrl;
+      const d   = await r.json();
+      console.log('cartCreate response:', JSON.stringify(d));
+      const url = d?.data?.cartCreate?.cart?.checkoutUrl;
       if (url) { window.location.href = url; return; }
-      console.error('cartCreate userErrors:', d2?.data?.cartCreate?.userErrors);
+      console.error('cartCreate userErrors:', d?.data?.cartCreate?.userErrors);
     } catch (err) {
       console.error('Shopify checkout error:', err);
     }
 
-    // Last-resort fallback
     btn.textContent = origText;
     btn.disabled    = false;
     alert('Could not reach checkout. Please visit mivu-uv.com directly or try again.');
@@ -513,40 +516,16 @@ function setupShopify() {
 
   allBtns.forEach(btn => btn.addEventListener('click', handleBuyClick));
 
-  /* ── Background: fetch price + pre-build cart URL ── */
+  /* ── Background: pre-build cart URL for default selection (2-pack) ── */
   fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
     method : 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
-    body   : JSON.stringify({ query: `{
-      product(id: "gid://shopify/Product/${PID}") {
-        variants(first: 1) {
-          edges { node { id price { amount currencyCode } } }
-        }
+    body   : JSON.stringify({ query: `mutation {
+      cartCreate(input: { lines: [{ merchandiseId: "${selectedVariantId}", quantity: 1 }] }) {
+        cart { checkoutUrl }
+        userErrors { message }
       }
     }` }),
-  })
-  .then(r => r.json())
-  .then(data => {
-    const node   = data.data.product.variants.edges[0].node;
-    variantId    = node.id;
-    const amount = parseFloat(node.price.amount);
-    const symbol = node.price.currencyCode === 'GBP' ? '£'
-                 : node.price.currencyCode === 'EUR' ? '€' : '$';
-
-    document.querySelectorAll('.floating-price').forEach(el => el.textContent = symbol + amount.toFixed(2));
-    document.querySelectorAll('.purchase-price').forEach(el => el.textContent = symbol + amount.toFixed(2));
-    document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${symbol + (amount / 60).toFixed(2)} per pad`);
-
-    return fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
-      method : 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
-      body   : JSON.stringify({ query: `mutation {
-        cartCreate(input: { lines: [{ merchandiseId: "${node.id}", quantity: 1 }] }) {
-          cart { checkoutUrl }
-          userErrors { message }
-        }
-      }` }),
-    });
   })
   .then(r => r.json())
   .then(data => {
