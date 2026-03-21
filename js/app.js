@@ -556,7 +556,8 @@ function setupShopify() {
       });
       const d   = await r.json();
       console.log('cartCreate response:', JSON.stringify(d));
-      const url = d?.data?.cartCreate?.cart?.checkoutUrl;
+      const rawUrl = d?.data?.cartCreate?.cart?.checkoutUrl;
+      const url = rawUrl ? rawUrl.replace(/^https?:\/\/[^/]+/, `https://${SHOP}`) : null;
       if (url) { window.location.href = url; return; }
       console.error('cartCreate userErrors:', d?.data?.cartCreate?.userErrors);
     } catch (err) {
@@ -584,8 +585,8 @@ function setupShopify() {
   .then(r => r.json())
   .then(data => {
     console.log('Background cartCreate:', JSON.stringify(data));
-    const url = data?.data?.cartCreate?.cart?.checkoutUrl;
-    if (url) checkoutUrl = url;
+    const rawUrl = data?.data?.cartCreate?.cart?.checkoutUrl;
+    if (rawUrl) checkoutUrl = rawUrl.replace(/^https?:\/\/[^/]+/, `https://${SHOP}`);
   })
   .catch(err => console.warn('Shopify background setup failed:', err));
 }
