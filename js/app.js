@@ -747,6 +747,23 @@ function setupResults() {
   if (compTable) observer.observe(compTable);
 }
 
+function setupGallery() {
+  const blocks = document.querySelectorAll('.ed-block');
+  if (!blocks.length) return;
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelector('.ed-img-wrap')?.classList.add('visible');
+        entry.target.querySelector('.ed-text')?.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  blocks.forEach(block => observer.observe(block));
+}
+
 function setupReviews() {
   const cards = document.querySelectorAll('.review-card');
   if (!cards.length) return;
@@ -845,6 +862,7 @@ function initExperience() {
   setupDarkOverlay();
   setupMarquee();
   setupRitual();
+  setupGallery();
   setupReviews();
   setupResults();
   setupFaq();
