@@ -532,63 +532,23 @@ function setupShopify() {
     });
   });
 
+  /* ── Direct cart URL (no API needed) ── */
+  function getCartUrl() {
+    const numericId = selectedVariantId.split('/').pop();
+    return `https://${SHOP}/cart/${numericId}:1`;
+  }
+
   const allBtns = [
     document.getElementById('floating-cta'),
     ...document.querySelectorAll('.cta-primary, .purchase-btn'),
   ].filter(Boolean);
 
-  /* ── On click: use pre-built URL or build on demand ── */
-  async function handleBuyClick(e) {
-    e.preventDefault();
-
-    if (checkoutUrl) { window.location.href = checkoutUrl; return; }
-
-    const btn = e.currentTarget;
-    const origText = btn.textContent;
-    btn.textContent = 'Loading…';
-    btn.disabled = true;
-
-    try {
-      const r = await fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
-        method : 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
-        body   : JSON.stringify({ query: `mutation { cartCreate(input:{ lines:[{ merchandiseId:"${selectedVariantId}", quantity:1 }] }) { cart{ checkoutUrl } userErrors{ message } } }` }),
-      });
-      const d   = await r.json();
-      console.log('cartCreate response:', JSON.stringify(d));
-      const rawUrl = d?.data?.cartCreate?.cart?.checkoutUrl;
-      const url = rawUrl ? rawUrl.replace(/^https?:\/\/[^/]+/, `https://${SHOP}`) : null;
-      if (url) { window.location.href = url; return; }
-      console.error('cartCreate userErrors:', d?.data?.cartCreate?.userErrors);
-    } catch (err) {
-      console.error('Shopify checkout error:', err);
-    }
-
-    btn.textContent = origText;
-    btn.disabled    = false;
-    alert('Could not reach checkout. Please visit mivu-uv.com directly or try again.');
-  }
-
-  allBtns.forEach(btn => btn.addEventListener('click', handleBuyClick));
-
-  /* ── Background: pre-build cart URL for default selection (2-pack) ── */
-  fetch(`https://${SHOP}/api/2023-10/graphql.json`, {
-    method : 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': TOKEN },
-    body   : JSON.stringify({ query: `mutation {
-      cartCreate(input: { lines: [{ merchandiseId: "${selectedVariantId}", quantity: 1 }] }) {
-        cart { checkoutUrl }
-        userErrors { message }
-      }
-    }` }),
-  })
-  .then(r => r.json())
-  .then(data => {
-    console.log('Background cartCreate:', JSON.stringify(data));
-    const rawUrl = data?.data?.cartCreate?.cart?.checkoutUrl;
-    if (rawUrl) checkoutUrl = rawUrl.replace(/^https?:\/\/[^/]+/, `https://${SHOP}`);
-  })
-  .catch(err => console.warn('Shopify background setup failed:', err));
+  allBtns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      window.location.href = getCartUrl();
+    });
+  });
 }
 
 function setupMobileVideoScrub() {
