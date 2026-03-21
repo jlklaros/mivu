@@ -471,9 +471,12 @@ function setupShopify() {
       if (newVariant !== selectedVariantId) {
         selectedVariantId = newVariant;
         checkoutUrl = null;  // invalidate cached URL for old selection
+        const packLabel = btn.querySelector('.pack-qty')?.textContent || '';
         document.querySelectorAll('.purchase-price').forEach(el => el.textContent = btn.dataset.price);
         document.querySelectorAll('.purchase-per').forEach(el => el.textContent = `· ${btn.dataset.per} per pad`);
+        document.querySelectorAll('.purchase-pack-label').forEach(el => el.textContent = packLabel);
         document.querySelectorAll('.floating-price').forEach(el => el.textContent = btn.dataset.price);
+        document.querySelectorAll('.floating-pack').forEach(el => el.textContent = packLabel);
       }
     });
   });

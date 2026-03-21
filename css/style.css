@@ -1965,3 +1965,16 @@ body {
 @media (max-width: 600px) {
   .ritual-lifestyle { max-width: 100%; border-radius: 14px; }
 }
+
+/* ── Pack label in price row ───────────────────────── */
+.purchase-pack-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sage);
+  background: rgba(143,173,143,0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 6px;
+}
